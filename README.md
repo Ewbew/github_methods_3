@@ -8,7 +8,8 @@ __Practical exercises__: Wednesdays 10-12 (Class 2), Wednesdays 16-18 (Class 1) 
 __Questions__: We'll collect questions during the classes and any time really and add them in the following document: https://cryptpad.fr/pad/#/2/pad/edit/U21qNTbLgfkRiGZU1bnmDE2o/
 
 
-HEJDFHLKJSDFLJSDHFLSDJFHLKJ
+HEJDFHLKJSDFLJSDHFLSDJFHLKJdfbSHFB,sd<fhSÆJFBSLDKJFH
 Fuck mand, jeg aner ikke hvad det er der foregår
 
 Jeg er ikke særlig tilfreds med dette
+sdfl<sgfl<swkjhflaewkjfhsehwpuhhwljsdhfpæ<sjdhflsk<h<æskjfh<slfhfhwdjfhsdlfjhdel.
