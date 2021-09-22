@@ -1,7 +1,7 @@
 ---
 title: "practical_exercise_1, Methods 3, 2021, autumn semester"
-author: '[FILL IN YOUR NAME]'
-date: "[FILL IN THE DATE]"
+author: 'Otto Sejrskild Santesson'
+date: "15 September 2021"
 output: html_document
 ---
 
@@ -13,6 +13,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+pacman::p_load(reticulate,Rcpp)
 ```
 
 # Practical Exercise 1
@@ -167,7 +168,102 @@ The general linear model: $Y = X \beta + \epsilon$:
 Do a linear regression, expressing fuel usage as a function of weight using the function __lm__  
 ```{r, eval=FALSE}
 data(mtcars)
-model <- lm(formula=..., data=...)
+
+# We make our linear model
+model <- lm(mpg ~ wt, data=mtcars);model
+summary(model)
+
+b1Est = model$coefficients[2];b1Est
+b0Est = model$coefficients[1];b0Est
+bHat = rbind(b0Est,b1Est);bHat
+Y = mtcars$mpg;Y
+X = mtcars$wt;X
+YHat = b0Est + b1Est*X;YHat
+
+beetaHat = (Y-epsilon)/X;beetaHat[,1]
+
+
+# Two ways of getting the epsilon of the model:
+epsilon = resid(model);epsilon
+epsilon2 = Y - YHat;epsilon2
+```
+
+```{r}
+?arrows()
+
+arrows(X,Y,X=X,YHat=Y)
+```
+
+
+
+
+```{r, eval=FALSE}
+# Since the real Y-values (Y-values, not Y-hat (the estimated Y value)) are defined by the fuel usage, we can simply extract the Y-values by taking them from the column of interest in the mtcars dataset
+Y = mtcars$mpg  %>% 
+  t();Y
+# We transpose the column for later use
+
+
+#Can you feel the love tonight
+```
+1. extract $\hat{\beta}$, $Y$, $\hat{Y}$, $X$ and $\epsilon$ from __model__ (hint: have a look at the function __model.matrix__)  
+    i. create a plot that illustrates $Y$ and $\hat{Y}$ (if you are feeling ambitious, also include $\epsilon$ (hint: you can use the function __arrows__))
+2. estimate $\beta$ for a quadratic model ($y = {\beta}_{2} x^2 + {\beta}_{1} x + {\beta}_{0}$) using ordinary least squares _without_ using __lm__; $\hat{\beta} = {({X}^{T} X)}^{-1} {X}^{T} Y$ (hint: add a third column to $X$ from step 1)
+3. compare your acquired $\hat{\beta}$ with the output of the corresponding quadratic model created using __lm__ (hint: use the function __I__, see details under help and the sub-section formula operators here: https://www.datacamp.com/community/tutorials/r-formula-tutorial)  
+    i. create a plot that illustrates $Y$ and $\hat{Y}$ (if you are feeling ambitious, also include $\epsilon$ (hint: you can use the function __arrows__))  
+
+
+
+The estimated slope of the modeled linear relationship between the two variables, weight and fuel usage, or the $\hat{\beta}$ is therefore: -5.344472
+
+```{r, eval=FALSE}
+?data()
+
+const <- rep(1,length(mtcars$mpg))
+
+bHat = rep()
+
+
+
+length(mtcars$mpg)
+
+Yhat = 
+
+coef(model)
+
+model$coefficients
+
+modelMatrix = model.matrix(model);modelMatrix
+
+modelMatrix
+
+mtcars["wt"];modelMatrix
+
+?model.matrix
+
+modelMatrix
+
+modelMatrix[,2]
+X = modelMatrix[,2]  
+X
+model
+
+mtcars
+?arrows
+
+t(X)
+
+t(X) %*% X
+
+solve(t(X) %*% X)
+
+solve(t(X) %*% X) %*% t(X)
+
+bhat <- solve(t(X) %*% X) %*% t(X) %*% y
+bhat
+
+Skrrtrgdgoidfyhgios<
+
 ```
 1. extract $\hat{\beta}$, $Y$, $\hat{Y}$, $X$ and $\epsilon$ from __model__ (hint: have a look at the function __model.matrix__)  
     i. create a plot that illustrates $Y$ and $\hat{Y}$ (if you are feeling ambitious, also include $\epsilon$ (hint: you can use the function __arrows__))
