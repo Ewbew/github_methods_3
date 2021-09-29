@@ -13,6 +13,8 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+pacman::p_load(utils,tidyverse, patchwork, ggplot2, lme4, stats, grid, ggpubr, ggrepel, graphics)
 ```
 
 # Assignment 1: Using mixed effects modelling to model hierarchical data
@@ -23,6 +25,7 @@ The dataset has been shared on GitHub, so make sure that the csv-file is on your
 
 ```{r}
 politeness <- read.csv('politeness.csv') ## read in data
+attach(politeness)
 ```
 
 # Exercises and objectives
@@ -37,12 +40,90 @@ REMEMBER: This assignment will be part of your final portfolio
 ## Exercise 1 - describing the dataset and making some initial plots
 
 1) Describe the dataset, such that someone who happened upon this dataset could understand the variables and what they contain  
-    i. Also consider whether any of the variables in _politeness_ should be encoded as factors or have the factor encoding removed. Hint: ```?factor```  
+    i. Also consider whether any of the variables in _politeness_ should be encoded as factors or have the factor encoding removed. Hint: ```?factor```
+
+
+### Describing the different variables of the dataset
+
+#### 'subject'
+This variable indicates the specific ID assigned to the different participants of the experiment (the experiment, from which the data set is taken from [Winter & Grawunder, 2012]). Having this variable makes it possible to account for between-participant variability when making a model of the data at a later point.
+
+#### 'gender'
+This variable specifies the gender of the participant, where 'F' means 'Female' and 'M' means 'Male'. 
+
+```{r}
+politeness$gender = as.factor(politeness$gender)
+
+```
+
+
+
+#### 'scenario'
+This variable specifies the experimental condition of the data point (row) in the data set - in short, there were 7 different scenarios or contexts in the experimental setting of the study
+
+
+Should be transformed into a factor, since the different integers of the variable column specifies only a different scenario/trial - in other words, a 'scenario' value of 4 compared to a value of 1 doesn't mean that it is "more", simply just that it is different.
+
+It is a categorical variable, which is differentiated with integers - the integers are only used to specify the specific scenario - they could just as well have been substituted with factors in the form of strings e.g. if scenario 1 was "arriving late at class", ....
+
+The variable is included in the data set as to  
+
+
+the ID 
+
+
+of the individual participant of the experiment 
+
+```{r}
+politeness$scenario = as.factor(politeness$scenario)
+```
+
+
+#### 'attitude'
+This variable describes whether the scenario of the given data point is either polite or informal. This, as with the gender variable, is binary and categorical -  it would therefore make sense to encode the variable as a factor.
+
+```{r}
+politeness$attitude = as.factor(politeness$attitude)
+```
+
+
+#### 'total_duration'
+This variable specifies the duration of the utterance/response to the task/given scenario of the experimental
+
+
+#### 'f0mn'
+This variable specifies the overall/global pitch of the utterance/response to the prompt of the trial
+
+#### 'hiss-count'
+This variable specifies the amount of 'hisses' uttered during the participant's response in the trial. A 'hiss' is described as a "noisy breath intake" (Winter & Grawunder, 2012, p. 813).
+
+    
+    
+    
 2) Create a new data frame that just contains the subject _F1_ and run two linear models; one that expresses _f0mn_ as dependent on _scenario_ as an integer; and one that expresses _f0mn_ as dependent on _scenario_ encoded as a factor  
     i. Include the model matrices, $X$ from the General Linear Model, for these two models in your report and describe the different interpretations of _scenario_ that these entail
     ii. Which coding of _scenario_, as a factor or not, is more fitting?
 3) Make a plot that includes a subplot for each subject that has _scenario_ on the x-axis and _f0mn_ on the y-axis and where points are colour coded according to _attitude_
     i. Describe the differences between subjects
+    
+    
+    
+```{r}
+newPoliteness = subset(politeness, subject == "F1")
+view(newPoliteness)
+class(newPoliteness$scenario)
+newPoliteness$scenario = as.integer(newPoliteness$scenario)
+newPoliteness2 = newPoliteness
+newPoliteness2$scenario = as.factor(newPoliteness2$scenario)
+class(newPoliteness2$scenario)
+
+modelInt = lm(f0mn ~ scenario, newPoliteness);summary(modelInt)
+
+modelFac = lm(f0mn ~ scenario, newPoliteness2);summary(modelFac)
+
+
+
+```
     
 ## Exercise 2  - comparison of models
 
