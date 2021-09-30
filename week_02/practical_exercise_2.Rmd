@@ -74,7 +74,7 @@ politeness$attitude = as.factor(politeness$attitude)
 
 
 #### 'total_duration'
-This variable specifies the duration of the utterance/response to the task/given scenario of the experimental. The unit is in seconds.
+This variable specifies the duration of the utterance/response to the task/given scenario of the experimental. The unit is seconds.
 
 #### 'f0mn'
 This variable specifies the overall/global pitch of the utterance/response to the prompt of the trial. The unit of the variable/the pitch is in hertz (Hz)
@@ -125,7 +125,6 @@ mixed.model <- lmer(formula=..., data=...)
 example.formula <- formula(dep.variable ~ first.level.variable + (1 | second.level.variable))
 ```
 
-
 1) Build four models and do some comparisons
     i. a single level model that models _f0mn_ as dependent on _gender_
 ```{r}
@@ -157,14 +156,12 @@ AIC(model1,model2,model3,model4)
 ```
 Model 4, the model that has both separate intercepts for subject and intercepts, has the lowest residual standard deviation score (30.65803). The model also has the best AIC-score of 2092.482 (the lowest score)
 
-
   vi. which of the second-level effects explains the most variance?
 ```{r}
 summary(model4)
 summary(model3)
 summary(model2)
 ```
-
 We see in the model with separate intercepts for both subject and scenario, that intercepts of subject explain more than 6 times the variance than the intercepts of scenario (588.83 vs. 96.17).
 In the model with separate intercepts for subject as the only second-level effect, the effect explains 595.1 of the variance. In the model with separate intercepts for scenario, the effect only accounts for 91.77 of the variance.
 In conclusion, the second-level effect of separate intercepts for subject clearly explains the most variance.
