@@ -1,7 +1,7 @@
 ---
 title: "practical_exercise_2, Methods 3, 2021, autumn semester"
-author: '[FILL IN YOUR NAME]'
-date: "[FILL IN THE DATE]"
+author: 'Otto Sejrskild Santesson'
+date: "29th of September, 2021"
 output: pdf_document
 ---
 
@@ -14,7 +14,7 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-pacman::p_load(utils,tidyverse, patchwork, ggplot2, lme4, stats, grid, ggpubr, ggrepel, graphics,effects)
+pacman::p_load(utils,tidyverse, patchwork, ggplot2, lme4, stats, grid, ggpubr, ggrepel, graphics,effects,VCA)
 ```
 
 # Assignment 1: Using mixed effects modelling to model hierarchical data
@@ -25,7 +25,6 @@ The dataset has been shared on GitHub, so make sure that the csv-file is on your
 
 ```{r}
 politeness = read.csv('politeness.csv') ## read in data
-attach(politeness)
 ```
 
 # Exercises and objectives
@@ -50,29 +49,16 @@ This variable indicates the specific ID assigned to the different participants o
 
 #### 'gender'
 This variable specifies the gender of the participant, where 'F' means 'Female' and 'M' means 'Male'. 
+It would make sense to encode this variable as a factor, as the two different values/levels of the variable is simply just different from each other, not numerically larger than the other (which might be self evident, given that the class of the variable is "character" or strings)
 
 ```{r}
 politeness$gender = as.factor(politeness$gender)
-
 ```
 
-
-
 #### 'scenario'
-This variable specifies the experimental condition of the data point (row) in the data set - in short, there were 7 different scenarios or contexts in the experimental setting of the study
+This variable specifies the experimental condition of the data point (row) in the data set - in short, there were 7 different scenarios or contexts in the experimental setting of the study, which has been assigned a unique number between 1-7.
 
-
-Should be transformed into a factor, since the different integers of the variable column specifies only a different scenario/trial - in other words, a 'scenario' value of 4 compared to a value of 1 doesn't mean that it is "more", simply just that it is different.
-
-It is a categorical variable, which is differentiated with integers - the integers are only used to specify the specific scenario - they could just as well have been substituted with factors in the form of strings e.g. if scenario 1 was "arriving late at class", ....
-
-The variable is included in the data set as to  
-
-
-the ID 
-
-
-of the individual participant of the experiment 
+The variable should be transformed into a factor, since the different integers of the variable column specifies only a different scenario/trial - in other words, a 'scenario' value of 4 compared to a value of 1 doesn't mean that it is "more", simply just that it is different.
 
 ```{r}
 politeness$scenario = as.factor(politeness$scenario)
@@ -88,22 +74,17 @@ politeness$attitude = as.factor(politeness$attitude)
 
 
 #### 'total_duration'
-This variable specifies the duration of the utterance/response to the task/given scenario of the experimental
-
+This variable specifies the duration of the utterance/response to the task/given scenario of the experimental. The unit is in seconds.
 
 #### 'f0mn'
-This variable specifies the overall/global pitch of the utterance/response to the prompt of the trial
+This variable specifies the overall/global pitch of the utterance/response to the prompt of the trial. The unit of the variable/the pitch is in hertz (Hz)
 
 #### 'hiss-count'
 This variable specifies the amount of 'hisses' uttered during the participant's response in the trial. A 'hiss' is described as a "noisy breath intake" (Winter & Grawunder, 2012, p. 813).
-
-    
     
     
 2) Create a new data frame that just contains the subject _F1_ and run two linear models; one that expresses _f0mn_ as dependent on _scenario_ as an integer; and one that expresses _f0mn_ as dependent on _scenario_ encoded as a factor  
-    i. Include the model matrices, $X$ from the General Linear Model, for these two models in your report and describe the different interpretations of _scenario_ that these entail
-    ii. Which coding of _scenario_, as a factor or not, is more fitting?
-    
+  
 ```{r}
 newPoliteness = subset(politeness, subject == "F1")
 newPoliteness$scenario = as.integer(newPoliteness$scenario)
@@ -115,23 +96,22 @@ modelInt = lm(f0mn ~ scenario, newPoliteness);summary(modelInt)
 modelFac = lm(f0mn ~ scenario, newPoliteness2);summary(modelFac)
 ```
 
-
+  i. Include the model matrices, $X$ from the General Linear Model, for these two models in your report and describe the different interpretations of _scenario_ that these entail
+    ii. Which coding of _scenario_, as a factor or not, is more fitting?
 ```{r}
 matrixInt = model.matrix(modelInt);matrixInt
 matrixFac = model.matrix(modelFac);matrixFac
 ```
-
+If the model used scenario as an integer, it would mean, that scenario 4 was 4 times "more" than scenario 1, which doesn't make sense - the scenarios are simply different from each other, not "more" or "less" scenario than the other. It therefore makes sense to make the model on scenario as a factor, where each factor has a different effect on the pitch. This is also expressed in the model matrix where scenario is a factor - the rows are paired up by scenario (7 different scenarios, data point 1-2 having scenario 1, 3-4 having scenario 2 etc.), and the parameter of the given scenario is "activated" if the value in the column of the matrix is 1.
 
 3) Make a plot that includes a subplot for each subject that has _scenario_ on the x-axis and _f0mn_ on the y-axis and where points are colour coded according to _attitude_
     i. Describe the differences between subjects
-    
-    
 ```{r}
 plotto = ggplot(politeness, aes(scenario, f0mn, color = attitude)) +
   geom_point() +
   facet_wrap(~subject);plotto
 ```
-
+The main difference between the subjects we can see from the plot, is that females in general have a higher pitch than males. Furthermore we can see that the data points of F5 are way more scattered than the data points of the rest of the subjects. What we overall can see from the plots, is that not one plot is (totally) similar - this underlines the inter-subject variability there is in pitch of the voice, something that we might want to take into account when modeling the data.
 
 
 ## Exercise 2  - comparison of models
@@ -166,27 +146,29 @@ model3 = lmer(f0mn ~ gender + (1|subject),politeness);summary(model3)
 ```{r}
 model4 = lmer(f0mn ~ gender +(1|scenario)+(1|subject),politeness);summary(model4)
 ```
-v. which of the models has the lowest residual standard deviation, also compare the Akaike Information Criterion `AIC`?
+
+  v. which of the models has the lowest residual standard deviation, also compare the Akaike Information Criterion `AIC`?
 ```{r}
-sigma(model1)
-sigma(model2)
-sigma(model3)
-sigma(model4)
+sigma(model1) # 39.46268
+sigma(model2) # 38.448
+sigma(model3) # 32.04287
+sigma(model4) # 30.65803
 AIC(model1,model2,model3,model4)
 ```
+Model 4, the model that has both separate intercepts for subject and intercepts, has the lowest residual standard deviation score (30.65803). The model also has the best AIC-score of 2092.482 (the lowest score)
+
 
   vi. which of the second-level effects explains the most variance?
 ```{r}
 summary(model4)
 summary(model3)
 summary(model2)
-
-#comparing conditional R2 within the second levels
-MuMIn::r.squaredGLMM(model1)
-MuMIn::r.squaredGLMM(model2)
-MuMIn::r.squaredGLMM(model3)
-MuMIn::r.squaredGLMM(model4)
 ```
+
+We see in the model with separate intercepts for both subject and scenario, that intercepts of subject explain more than 6 times the variance than the intercepts of scenario (588.83 vs. 96.17).
+In the model with separate intercepts for subject as the only second-level effect, the effect explains 595.1 of the variance. In the model with separate intercepts for scenario, the effect only accounts for 91.77 of the variance.
+In conclusion, the second-level effect of separate intercepts for subject clearly explains the most variance.
+
 
 #### 2) Why is our single-level model bad?
 Our model is bad, since: 
@@ -240,7 +222,7 @@ plottoTo = ggplot(politeness, aes(scenario, f0mn, color = attitude)) +
   geom_point(aes(y = yhat), colour="darkblue", size= 0.5)+ facet_wrap(~subject);plottoTo
 
 ```
-
+The smaller, dark blue dots on the plots are the fitted values of the model/the estimated y-values.
     
 ## Exercise 3 - now with attitude
 
@@ -300,5 +282,28 @@ The variables in the data set that have been used in the model are the following
 'scenario' specifies which specific scenario the trial was, e.g. the participant had to imagine themselves being in their professor's office, where they had to ask for a letter of recommendation.
 
 ii)
+By looking at the summary of the chose model, model 2, we can conclude from the values, that gender has the biggest effect on the pitch of the utterance - the estimate of the model shows, that going from female to male, the pitch goes down by 115.437 Hz. When going from informal to polite, the pitch decreases with 14.819 Hz. The intercept of the model has an estimate of 254.398, signifying that a female in an informal scenario is predicted to have pitch of 254.398 Hz.
 
+iii)
+As explained earlier, it makes sense to model for individual differences of voice pitch, since the pitches not only vary from gender to gender (as showed in the output of the summary of the model 2), but also between people with the same gender. Therefore we make separate intercepts for subjects in our model, since we know that there is inter-subject variability of pitch.
+As with making separate intercepts for scenarios, this might not intuitively make as much sense as with for subjects, but as explained earlier, the different scenarios might have different baselines for what the pitch is, e.g. one of the scenarios might be more associated with being a 'noisy' environment, which could have an influence on pitch. To account for these different baselines of the different scenarios we can therefore make separate intercepts.
 
+iv)
+The variance components of the second levels/random effects are as follows (taken from the output of summar(model_2) command:
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ subject  (Intercept) 585.6    24.20   
+ scenario (Intercept) 106.7    10.33   
+ Residual             882.7    29.71   
+ 
+ As we can see on the variance components above, the separate intercepts for subject accounts for quite a bit more of the variance (585.6) than the separate intercepts for scenario does (106.7). The remaining variance not accounted for by including the second levels of the model is 882.7
+
+The chosen model has a sigma of 29.71087 and and R2c-value of 0.8196777.
+
+v)
+```{r}
+qqnorm(resid(model_2));qqline(resid(model_2), col = "cyan")
+```
+
+The QQplot looks similar to the one we made in exercise 2, part 2, iv. - it's not perfect, but looks alright.
