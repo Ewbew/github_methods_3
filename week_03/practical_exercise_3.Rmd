@@ -1,7 +1,7 @@
 ---
 title: "practical_exercise_3, Methods 3, 2021, autumn semester"
-author: '[FILL IN YOUR NAME]'
-date: "[FILL IN THE DATE]"
+author: 'Otto Sejrskild Santesson'
+date: "5 October 2021"
 output: html_document
 ---
 
@@ -13,6 +13,8 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+pacman::p_load(utils,tidyverse, patchwork, ggplot2, lme4, stats, grid, ggpubr, ggrepel, graphics,effects,VCA, vroom, readbulk,stringi, gridExtra)
 ```
 
 # Exercises and objectives
@@ -29,13 +31,203 @@ REMEMBER: This assignment will be part of your final portfolio
 Go to https://osf.io/ecxsj/files/ and download the files associated with Experiment 2 (there should be 29).  
 The data is associated with Experiment 2 of the article at the following DOI https://doi.org/10.1016/j.concog.2019.03.007  
 
+
+1) Put the data from all subjects into a single data frame  
+2) Describe the data and construct extra variables from the existing variables  
+    i. add a variable to the data frame and call it _correct_ (have it be a _logical_ variable). Assign a 1 to each row where the subject indicated the correct answer and a 0 to each row where the subject indicated the incorrect answer (__Hint:__ the variable _obj.resp_ indicates whether the subject answered "even", _e_ or "odd", _o_, and the variable _target_type_ indicates what was actually presented.
+```{r}
+df <- read_bulk(
+  directory= "experiment2/",# "Audition/" is the foldername where data is stored
+  fun = read_csv
+)
+
+df = df %>% 
+  mutate(correct = ifelse(target.type == "odd" & obj.resp == "o",1,
+                          ifelse(target.type == "even" & obj.resp == "e",1,0)))
+```
+
+ii. describe what the following variables in the data frame contain, _trial.type_, _pas_, _trial_, _target.contrast_, _cue_, _task_, _target_type_, _rt.subj_, _rt.obj_, _obj.resp_, _subject_ and _correct_. (That means you can ignore the rest of the variables in your description). For each of them, indicate and argue for what `class` they should be classified into, e.g. _factor_, _numeric_ etc.  
+
+*_trial.type_*: a character variable encoded as either "staircase" (i.e. data was collected as a part of the adaptive staircase procedure which was performed at the beginning of the study) or "experiment" (i.e. data was collected as a part of the actual experiment trials). It should be re-encoded a factor in order for _trial.type_ to be modelled later in the analysis, if relevant. 
+```{r}
+df$trial.type <- as.factor(df$trial.type)
+```
+
+*_pas_*: indicates one of the 4 categorically different ratings of the Perceptual Awareness Scale (PAS: Ramsøy & Overgaard, 2004), rated by the participant. It indicates the participant's perceptual awareness of the stimulus where the numbers represent the following:* 
+
+*(1) No experience* (i.e. "no impression of the stimulus. All answers are seen as mere guesses)*
+
+*(2) Weak Glimpse*  (i.e. "A feeling that something has been shown. Not characterized by any content, and this cannot be specified any further)*
+
+*(3) Almost Clear Experience* (i.e. "Ambiguous experience of the stimulus. Some stimulus aspects are experienced more vividly than others. A feeling of almost being certain about one’s answer")*
+
+*4) Clear experience* (i.e. "Non-ambiguous experience of the stimulus. No doubt in one’s answer")*
+
+It should be encoded as a factor as it is a case of ordinal data.
+```{r}
+df$pas <- as.factor(df$pas)
+```
+
+*_trial_*: refers to the trial number. It is numeric but should be factor
+```{r}
+df$trial <- as.factor(df$trial)
+```
+
+*_target.contrast_*: indicates the contrast of the target stimulus, relative to the background, adjusted to match the threshold of each individual by using the QUEST-algorithm. It is numeric and should stay numeric as we are dealing with a continuous variable with values falling within the range of 0-1*
+
+*_cue_*: cue shown to participants to indicate the set of possible digits that might appear on each trail. There were 36 different combination of cues (0-35). The task-column specifies the number of potential targets cued. As the _cue_ variable contains nominal data, it should be reencoded into a factor.
+
+```{r}
+df$cue <- as.factor(df$cue)
+```
+
+
+*_task_*: indicates the number of potential targets that were cued. Consisted of either 2,4, or 8 digits, indicated by the character variable *_task_* taking one of the 3 values:
+
+  *singles* (2 possible targets) e.g. 2:9
+  *pairs* (4 possible targets) e.g. 24:57
+  *quadruplet* (8 possible targets) e.g. 2468:3579
+
+This variable should also be re-encoded as a factor as we are, again, dealing with nominal data.
+```{r}
+
+df$task <- as.factor(df$task)
+
+```
+
+*target_type*: indicates the parity of the target stimulus (i.e. whether the digit was even or odd). It is encoded as a character but should be re-encoded as a factor. 
+```{r}
+df$target.type <- as.factor(df$target.type)
+```
+
+*rt.subj*: response time of answering Perceptual Awareness Scale
+Encoded as numeric as it is continuous data.
+
+*rt.obj*: response time (time taken by participant to indicate the parity of the target stimulus). 
+Encoded as numeric as it is continuous data.
+
+*obj.resp*: the participant's answer when asked to indicate the parity of the target stimulus (e = even, o = odd). Encoded as numeric but should be re-encoded as a factor.
+```{r}
+df$obj.resp <- as.factor(df$obj.resp)
+```
+
+*subject*: participant ID, enabling us to distinguish between data collected from different participants. Is a character variable but should be re-encoded as a factor as we are dealing with a repeated measures design and therefore need to be able to model subject as random intercepts in the analysis phase.
+
+```{r}
+df$subject <- as.factor(df$subject)
+```
+
+*correct*: indicates accuracy of the respondent's answer of the target stimulus' parity. It is a binary variable where 0 indicates an incorrect response and 1 indicates a correct one, and should therefore be re-encoded as a factor. 
+
+```{r}
+df$correct <- as.factor(df$correct)
+```
+
+
+
 1) Put the data from all subjects into a single data frame  
 2) Describe the data and construct extra variables from the existing variables  
     i. add a variable to the data frame and call it _correct_ (have it be a _logical_ variable). Assign a 1 to each row where the subject indicated the correct answer and a 0 to each row where the subject indicated the incorrect answer (__Hint:__ the variable _obj.resp_ indicates whether the subject answered "even", _e_ or "odd", _o_, and the variable _target_type_ indicates what was actually presented.
     ii. describe what the following variables in the data frame contain, _trial.type_, _pas_, _trial_, _target.contrast_, _cue_, _task_, _target_type_, _rt.subj_, _rt.obj_, _obj.resp_, _subject_ and _correct_. (That means you can ignore the rest of the variables in your description). For each of them, indicate and argue for what `class` they should be classified into, e.g. _factor_, _numeric_ etc.  
-    iii. for the staircasing part __only__, create a plot for each subject where you plot the estimated function (on the _target.contrast_ range from 0-1) based on the fitted values of a model (use `glm`) that models _correct_ as dependent on _target.contrast_. These plots will be our _no-pooling_ model. Comment on the fits - do we have enough data to plot the logistic functions?  
-    iv. on top of those plots, add the estimated functions (on the _target.contrast_ range from 0-1) for each subject based on partial pooling model (use `glmer` from the package `lme4`) where unique intercepts and slopes for _target.contrast_ are modelled for each _subject_  
+    
+    
+    
+  iii. for the staircasing part __only__, create a plot for each subject where you plot the estimated function (on the _target.contrast_ range from 0-1) based on the fitted values of a model (use `glm`) that models _correct_ as dependent on _target.contrast_. These plots will be our _no-pooling_ model. Comment on the fits - do we have enough data to plot the logistic functions?  
+  
+```{r}
+dfStair = df %>% 
+  subset(trial.type == "staircase")
+
+dfStair$subject = gsub("(?<![0-9])0+", "", dfStair$subject, perl = TRUE)
+dfStair$subject = as.integer(dfStair$subject)
+
+nopoolfun <- function(i){
+  dat <- dfStair[which(dfStair$subject == i),]
+  model <- glm(correct~target.contrast, family = 'binomial', data=dat)
+  fitted <- model$fitted.values
+  plot_dat <- data.frame(cbind(fitted,'target.contrast'=dat$target.contrast))
+plot <- ggplot(plot_dat, aes(x = target.contrast, y = fitted))+
+  geom_point()+
+  geom_line(aes(x = target.contrast, y = fitted))+
+  xlab('Target Contrast')+
+  ylim(c(0,1))+
+  theme_minimal()
+return(plot)
+}
+
+subjects <- c(1:16)
+plots <- lapply(subjects, FUN=nopoolfun)
+do.call(grid.arrange,  plots)
+subjects <- c(17:29)
+plots <- lapply(subjects, FUN=nopoolfun)
+do.call(grid.arrange,  plots)
+```
+
+
+
+```{r}
+#  By looking at the different plots, the fitted values doesn't seem to follow the traditional sigmoid function of logistic regression - the s-formed curve, that indicates the probability of 1, given the predictor variable(s). We might therefore need more data 
+Data enoug for it to seem like there is a 
+
+
+
+# There seem to be "enough" data, since I can stil plo the logistic function (even though the typical sigmmoid function isn't ) 
+```
+  
+iv. on top of those plots, add the estimated functions (on the _target.contrast_ range from 0-1) for each subject based on partial pooling model (use `glmer` from the package `lme4`) where unique intercepts and slopes for _target.contrast_ are modelled for each _subject_  
     v. in your own words, describe how the partial pooling model allows for a better fit for each subject  
+
+```{r}
+partialPoolModel = glmer(correct~target.contrast + (target.contrast|subject), family = 'binomial', dfStair)
+dfStair$yEstPartialPooling = fitted(partialPoolModel)
+
+poolNoPoolFun <- function(i){
+  dat <- dfStair[which(dfStair$subject == i),]
+  model <- glm(correct~target.contrast, family = 'binomial', data=dat)
+  fitted <- model$fitted.values
+  plot_dat <- data.frame(cbind(fitted,'target.contrast'=dat$target.contrast,'yEstPartialPooling' = dat$yEstPartialPooling))
+plot <- ggplot(plot_dat)+
+  geom_point(aes(x = target.contrast, y = fitted), color = "pink")+
+  geom_line(aes(x = target.contrast, y = fitted), color = "pink")+
+  geom_point(aes(x = target.contrast, y = yEstPartialPooling), color = "orange")+
+  geom_line(aes(x = target.contrast, y = yEstPartialPooling), color = "orange")+
+  xlab('Target Contrast')+
+  ylim(c(0,1))+
+  theme_minimal()
+return(plot)
+}
+
+
+subjects <- c(1:16)
+plots <- lapply(subjects, FUN=poolNoPoolFun)
+do.call(grid.arrange,  plots)
+subjects <- c(17:29)
+plots <- lapply(subjects, FUN=poolNoPoolFun)
+do.call(grid.arrange,  plots)
+```
+
+```{r}
+poolNoPoolFun <- function(i){
+  dat <- dfStair[which(dfStair$subject == i),]
+  model <- glm(correct~target.contrast, family = 'binomial', data=dat)
+  fitted <- model$fitted.values
+  plot_dat <- data.frame(cbind(fitted,'target.contrast'=dat$target.contrast,'yEstPartialPooling' = dat$yEstPartialPooling))
+plot <- ggplot(plot_dat)+
+  geom_point(aes(x = target.contrast, y = yEstPartialPooling))+
+  geom_line(aes(x = target.contrast, y = yEstPartialPooling))+
+  xlab('Target Contrast')+
+  ylim(c(0,1))+
+  theme_minimal()
+ return(plot)
+}
+
+subjects <- c(17:29)
+plots <- lapply(subjects, FUN=poolNoPoolFun)
+do.call(grid.arrange,  plots)
+```
+
+
+
 
 ## Exercise 2
 
@@ -44,6 +236,34 @@ Now we __only__ look at the _experiment_ trials (_trial.type_)
 1) Pick four subjects and plot their Quantile-Quantile (Q-Q) plots for the residuals of their objective response times (_rt.obj_) based on a model where only intercept is modelled  
     i. comment on these    
     ii. does a log-transformation of the response time data improve the Q-Q-plots?  
+```{r}
+dfExp = df %>% 
+  subset(trial.type == "experiment")
+
+dfExp4 = dfExp %>% 
+  filter(subject == "004")
+
+dfExp10 = dfExp %>% 
+  filter(subject == "010")
+
+dfExp17 = dfExp %>% 
+  filter(subject == "017")
+
+dfExp20 = dfExp %>% 
+  filter(subject == "020")
+
+view(df)
+
+view(dfExp4)
+
+
+
+unique(dfExp$subject)
+
+```
+
+
+  
 2) Now do a partial pooling model modelling objective response times as dependent on _task_? (set `REML=FALSE` in your `lmer`-specification)  
     i. which would you include among your random effects and why? (support your choices with relevant measures, taking into account variance explained and number of parameters going into the modelling)  
     ii. explain in your own words what your chosen models says about response times between the different tasks  
