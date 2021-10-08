@@ -187,10 +187,10 @@ poolNoPoolFun <- function(i){
   fitted <- model$fitted.values
   plot_dat <- data.frame(cbind(fitted,'target.contrast'=dat$target.contrast,'yEstPartialPooling' = dat$yEstPartialPooling))
 plot <- ggplot(plot_dat)+
-  geom_point(aes(x = target.contrast, y = fitted), color = "pink")+
-  geom_line(aes(x = target.contrast, y = fitted), color = "pink")+
-  geom_point(aes(x = target.contrast, y = yEstPartialPooling), color = "orange")+
-  geom_line(aes(x = target.contrast, y = yEstPartialPooling), color = "orange")+
+  geom_point(aes(x = target.contrast, y = fitted), color = "#3f00ff")+
+  geom_line(aes(x = target.contrast, y = fitted), color = "#3f00ff")+
+  geom_point(aes(x = target.contrast, y = yEstPartialPooling), color = "#d82e21")+
+  geom_line(aes(x = target.contrast, y = yEstPartialPooling), color = "#d82e21")+
   xlab('Target Contrast')+
   ylim(c(0,1))+
   theme_minimal()
@@ -205,29 +205,8 @@ subjects <- c(17:29)
 plots <- lapply(subjects, FUN=poolNoPoolFun)
 do.call(grid.arrange,  plots)
 ```
-
-```{r}
-poolNoPoolFun <- function(i){
-  dat <- dfStair[which(dfStair$subject == i),]
-  model <- glm(correct~target.contrast, family = 'binomial', data=dat)
-  fitted <- model$fitted.values
-  plot_dat <- data.frame(cbind(fitted,'target.contrast'=dat$target.contrast,'yEstPartialPooling' = dat$yEstPartialPooling))
-plot <- ggplot(plot_dat)+
-  geom_point(aes(x = target.contrast, y = yEstPartialPooling))+
-  geom_line(aes(x = target.contrast, y = yEstPartialPooling))+
-  xlab('Target Contrast')+
-  ylim(c(0,1))+
-  theme_minimal()
- return(plot)
-}
-
-subjects <- c(17:29)
-plots <- lapply(subjects, FUN=poolNoPoolFun)
-do.call(grid.arrange,  plots)
-```
-
-
-
+Beep boop - blue is the no pooling model, and red is the partial pooling model.
+It is better at generalizing
 
 ## Exercise 2
 
@@ -252,15 +231,32 @@ dfExp17 = dfExp %>%
 dfExp20 = dfExp %>% 
   filter(subject == "020")
 
-view(df)
 
-view(dfExp4)
+dfExp4Model = lm(rt.obj ~ 1, data = dfExp4)
+dfExp10Model = lm(rt.obj ~ 1, data = dfExp10)
+dfExp17Model = lm(rt.obj ~ 1, data = dfExp17)
+dfExp20Model = lm(rt.obj ~ 1, data = dfExp20)
 
-
-
-unique(dfExp$subject)
-
+qqnorm(resid(dfExp4Model));qqline(resid(dfExp4Model), col = "blue")
+qqnorm(resid(dfExp10Model));qqline(resid(dfExp10Model), col = "green")
+qqnorm(resid(dfExp17Model));qqline(resid(dfExp17Model), col = "red")
+qqnorm(resid(dfExp20Model));qqline(resid(dfExp20Model), col = "purple")
 ```
+Doing an visual inspection of the QQ-plots, the residuals don't seem to be normally distributed at all (and therefore breaking one of the assumption of linear regression) - the values from the higher quantiles of the residuals diverges relatively much from the straight line, that they're supposed to follow, if they were normally distributed.
+
+We will therefore try to do a log-transformation of the response time data, to see if this will improve the QQplots:
+```{r}
+dfExp4ModelLog = lm(log(rt.obj) ~ 1, data = dfExp4)
+dfExp10ModelLog = lm(log(rt.obj) ~ 1, data = dfExp10)
+dfExp17ModelLog = lm(log(rt.obj) ~ 1, data = dfExp17)
+dfExp20ModelLog = lm(log(rt.obj) ~ 1, data = dfExp20)
+
+qqnorm(resid(dfExp4ModelLog));qqline(resid(dfExp4ModelLog), col = "blue")
+qqnorm(resid(dfExp10ModelLog));qqline(resid(dfExp10ModelLog), col = "green")
+qqnorm(resid(dfExp17ModelLog));qqline(resid(dfExp17ModelLog), col = "red")
+qqnorm(resid(dfExp20ModelLog));qqline(resid(dfExp20ModelLog), col = "purple")
+```
+Looking at the QQPlots of the log-transformed data, they look way better now - all QQplots, except the one of the log transformed data of subject 10, more or less fits the line 
 
 
   
