@@ -14,7 +14,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-pacman::p_load(utils,tidyverse, patchwork, ggplot2, lme4, stats, grid, ggpubr, ggrepel, graphics,effects,VCA, vroom, readbulk,stringi, gridExtra)
+pacman::p_load(utils,tidyverse, patchwork, ggplot2, lme4, stats, grid, ggpubr, ggrepel, graphics,effects,VCA, vroom, readbulk,stringi, gridExtra, MuMIn)
 ```
 
 # Exercises and objectives
@@ -256,29 +256,111 @@ qqnorm(resid(dfExp10ModelLog));qqline(resid(dfExp10ModelLog), col = "green")
 qqnorm(resid(dfExp17ModelLog));qqline(resid(dfExp17ModelLog), col = "red")
 qqnorm(resid(dfExp20ModelLog));qqline(resid(dfExp20ModelLog), col = "purple")
 ```
-Looking at the QQPlots of the log-transformed data, they look way better now - all QQplots, except the one of the log transformed data of subject 10, more or less fits the line 
+Looking at the QQPlots of the log-transformed data, they look way better now - all QQplots, except the one of the log transformed data of subject 10, more or less fits the line of the QQplot, which signifies that the residuals of the log-transformed data is more normally distributed compared to the non-log-transformed data
 
 
-  
 2) Now do a partial pooling model modelling objective response times as dependent on _task_? (set `REML=FALSE` in your `lmer`-specification)  
     i. which would you include among your random effects and why? (support your choices with relevant measures, taking into account variance explained and number of parameters going into the modelling)  
     ii. explain in your own words what your chosen models says about response times between the different tasks  
+    
+```{r}
+parPoolRtTaskModel1 = lmer(rt.obj ~ task + (1|subject), dfExp, REML = FALSE)
+
+parPoolRtTaskModel2 = lmer(rt.obj ~ task +(1|trial), dfExp, REML = FALSE)
+#Convergence error - signifies an overfit and therefore the model is hard tot generalize to new data
+
+parPoolRtTaskModel3 = lmer(rt.obj ~ task + (1|subject) + (1|trial), dfExp, REML = FALSE)
+
+parPoolRtTaskModel4 = lmer(rt.obj ~ task + (task|subject) + (1|trial), dfExp, REML = FALSE)
+# Convergence error - signifies an overfit and therefore the model is hard tot generalize to new data
+
+AIC(parPoolRtTaskModel1,parPoolRtTaskModel2,parPoolRtTaskModel3,parPoolRtTaskModel4)
+
+sigma(parPoolRtTaskModel1) # 2.858998
+sigma(parPoolRtTaskModel2) # 2.878982
+sigma(parPoolRtTaskModel3) # 2.858263
+sigma(parPoolRtTaskModel4) # 2.857295
+
+r.squaredGLMM(parPoolRtTaskModel1) #R2c = 0.014649
+r.squaredGLMM(parPoolRtTaskModel2) #R2c = 0.00082565
+r.squaredGLMM(parPoolRtTaskModel3) #R2c = 0.015158
+r.squaredGLMM(parPoolRtTaskModel4) #R2c = 0.015826
+```
+
+    
 3) Now add _pas_ and its interaction with _task_ to the fixed effects  
     i. how many types of group intercepts (random effects) can you add without ending up with convergence issues or singular fits?  
     ii. create a model by adding random intercepts (without modelling slopes) that results in a singular fit - then use `print(VarCorr(<your.model>), comp='Variance')` to inspect the variance vector - explain why the fit is singular (Hint: read the first paragraph under details in the help for `isSingular`)
     iii. in your own words - how could you explain why your model would result in a singular fit?  
-    
+```{r}
+convergTestModel1 = lmer(rt.obj ~ task + pas:task + (1|subject), dfExp, REML = FALSE)
+convergTestModel2 = lmer(rt.obj ~ task + pas:task + (1|subject) + (1|trial), dfExp, REML = FALSE)
+convergTestModel3 = lmer(rt.obj ~ task + pas:task + (1|subject) + (1|trial) + (1|cue), dfExp, REML = FALSE)
+
+convergTestModel4 = lmer(rt.obj ~ task + pas:task + (1|subject) + (1|trial) + (1|cue) + (1|target.type), dfExp, REML = FALSE)
+
+convergTestModel5 = lmer(rt.obj ~ task + pas:task + (1|subject) + (1|trial) + (1|cue) + (1|target.type) + (1|odd.digit), dfExp, REML = FALSE)
+
+convergTestModel6 = lmer(rt.obj ~ task + pas:task + (1|subject) + (1|trial) + (1|cue) + (1|target.type) + (1|odd.digit) + (1|even.digit), dfExp, REML = FALSE)
+
+print(VarCorr(convergTestModel6), comp='Variance')
+```
+The amount of group intercepts than can be added does not only depend on the amount, but also on the chosen group intercepts - but in our case, with the group intercepts chosen, it took 6 group intercepts before we ended up with singular fits
+
+"ii.By adding (1|subject)+(1|trial)+(1|task) to the existing model with "pas" and "task" as fixed effects interaction, the model met singular fits issues. When inspecting the variance vector of the model with singular fits (np_model_4), it shows that the reason for the singular fit, is that the model contains a random-effect variance estimate of zero, this random-effect is (1|task)."
+
+"iii. I suppose the singular fit is a result of overfitting. The model and its random effects are to complex to be supported by the data. To overcome this, we could remove some random effects one by one."
+
+
 ## Exercise 3
 
-1) Initialise a new data frame, `data.count`. _count_ should indicate the number of times they categorized their experience as _pas_ 1-4 for each _task_. I.e. the data frame would have for subject 1: for task:singles, pas1 was used # times, pas2 was used # times, pas3 was used # times and pas4 was used # times. You would then do the same for task:pairs and task:quadruplet  
+1) Initialize a new data frame, `data.count`. _count_ should indicate the number of times they categorized their experience as _pas_ 1-4 for each _task_. I.e. the data frame would have for subject 1: for task:singles, pas1 was used #times, pas2 was used # times, pas3 was used # times and pas4 was used # times. You would then do the same for task:pairs and task:quadruplet  
 
 ```{r}
-## you can start from this if you want to, but you can also make your own from scratch
-data.count <- data.frame(count = numeric(), 
-                         pas = numeric(), ## remember to make this into a factor afterwards
-                         task = numeric(), ## and this too
-                         subject = numeric()) ## and this too
-```        
+data_count <- df %>% 
+  group_by(subject, task, pas) %>% 
+  dplyr::summarize("count" = n())
+view(data_count)
+
+#EXTRA STUFF
+
+# Double-checking that there are no observations that fits with the following specifications, since it is not in the data frame of 'data_count':
+df %>% filter(subject == "002",task == "pairs",pas == 4)
+
+# We see, that there are no observations that meet the above specifications (the output of the above line gives a datafram with 0 rows), and therefore the row specifying this has been left out. If we want the rows that includes the different combinations of subject, pas and task, that has 0 as the amount of observations, we need to construct the data frame differently or mutate the data frame by inserting the rows (since I haven't found an easier way to do it and for the fun of it).
+# Since the data frame is going to be used for fitting regression lines, which makes it important to include all groups, even though where count = 0, we'll try constructing the data frame differently:
+
+baseDf = data.frame(pas = rep(1:4,(3*29)),
+                    task = rep(c(rep("singles",4),rep("pairs",4),rep("quadruplet",4)),29),
+                    subject = rep(1:29,each = (3*4)))
+
+df_copy = df
+df_copy$subject = gsub("(?<![0-9])0+", "", df_copy$subject, perl = TRUE)
+df_copy$subject = as.integer(df_copy$subject)
+
+count = c()
+
+for (i in 1:nrow(baseDf)){
+countVector = df_copy %>%  
+  filter(subject == baseDf[i,"subject"],task == baseDf[i,"task"],pas == baseDf[i,"pas"]) %>% 
+  nrow()
+count = append(count,countVector)
+}
+
+dataCount = cbind(count,baseDf)
+dataCount$pas = as.factor(dataCount$pas)
+dataCount$task = as.factor(dataCount$task)
+dataCount$subject = as.factor(dataCount$subject)
+```
+
+
+```{r}
+hist(dataCount$count)
+
+lmer(count ~ pas*task + (pas+0|subject), dataCount, family = poisson. 
+
+?lmer
+```
 
 2) Now fit a multilevel model that models a unique "slope" for _pas_ for each _subject_ with the interaction between _pas_ and _task_ and their main effects being modelled  
     i. which family should be used?  
