@@ -14,7 +14,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-pacman::p_load(utils,tidyverse, patchwork, ggplot2, lme4, stats, grid, ggpubr, ggrepel, graphics,effects,VCA, vroom, readbulk,stringi, gridExtra, MuMIn)
+pacman::p_load(utils,tidyverse, patchwork, ggplot2, lme4, stats, grid, ggpubr, ggrepel, graphics,effects,VCA, vroom, readbulk,stringi, gridExtra, MuMIn,dfoptim)
 ```
 
 # Exercises and objectives
@@ -355,10 +355,17 @@ dataCount$subject = as.factor(dataCount$subject)
 
 
 ```{r}
+
+# To check which family we should use, we make a histogram of the count variable to visually inspect the distribution of the data. 
 hist(dataCount$count)
+# We see, that the curve follows the one of a poisson distribution, which makes sense, since we're dealing with data that specifies counts - the data points therefore always have a positive x-value. Furthermore, the x-values are all integers.
 
-lmer(count ~ pas*task + (pas+0|subject), dataCount, family = poisson. 
-
+# We now make the model, specifying the family to be poisson, based on the nature of the data's distribution (no intercept for subject is being modeled - only the slope for the variable for each subject):
+count_model4 = glmer(count ~ pas*task + (pas+0|subject),data = dataCount, family = poisson) 
+summary(count_model4)
+count_model2 = glmer(count ~ pas*task + (pas|subject), data = dataCount, family = poisson)
+summary(count_model);summary(count_model2)
+?lmer
 ?lmer
 ```
 
