@@ -171,7 +171,7 @@ Data enoug for it to seem like there is a
 
 
 
-# There seem to be "enough" data, since I can stil plo the logistic function (even though the typical sigmmoid function isn't ) 
+# There seem to be "enough" data, since I can stil plo the logistic function (even though the typical sigmmoid function isn't ) #
 ```
   
 iv. on top of those plots, add the estimated functions (on the _target.contrast_ range from 0-1) for each subject based on partial pooling model (use `glmer` from the package `lme4`) where unique intercepts and slopes for _target.contrast_ are modelled for each _subject_  
@@ -360,12 +360,14 @@ dataCount$subject = as.factor(dataCount$subject)
 hist(dataCount$count)
 # We see, that the curve follows the one of a poisson distribution, which makes sense, since we're dealing with data that specifies counts - the data points therefore always have a positive x-value. Furthermore, the x-values are all integers.
 
-# We now make the model, specifying the family to be poisson, based on the nature of the data's distribution (no intercept for subject is being modeled - only the slope for the variable for each subject):
-count_model4 = glmer(count ~ pas*task + (pas+0|subject),data = dataCount, family = poisson) 
-summary(count_model4)
-count_model2 = glmer(count ~ pas*task + (pas|subject), data = dataCount, family = poisson)
+# We now make the model, specifying the family to be poisson, based on the nature of the data's distribution (no intercept for subject is being modeled - only the slope for the variable 'pas' for each subject):
+count_model = glmer(count ~ pas*task + (pas+0|subject), data = dataCount, family = poisson, control = glmerControl(optimizer = "bobyqa")) 
+summary(count_model)
+
+count_model2 = glmer(count ~ pas*task + (pas+0|subject), data = dataCount, family = poisson, control = glmerControl(optimizer = "bobyqa")) 
 summary(count_model);summary(count_model2)
-?lmer
+
+?glmer
 ?lmer
 ```
 
