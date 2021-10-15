@@ -367,14 +367,19 @@ summary(count_model)
 count_model2 = glmer(count ~ pas*task + (pas+0|subject), data = dataCount, family = poisson, control = glmerControl(optimizer = "bobyqa")) 
 summary(count_model);summary(count_model2)
 
-?glmer
-?lmer
 ```
 
 2) Now fit a multilevel model that models a unique "slope" for _pas_ for each _subject_ with the interaction between _pas_ and _task_ and their main effects being modelled  
     i. which family should be used?  
     ii. why is a slope for _pas_ not really being modelled?  
-    iii. if you get a convergence error, try another algorithm (the default is the _Nelder_Mead_) - try (_bobyqa_) for which the `dfoptim` package is needed. In `glmer`, you can add the following for the `control` argument: `glmerControl(optimizer="bobyqa")` (if you are interested, also have a look at the function `allFit`)
+    
+  Question and Lau's answer:
+  
+  Question: Question 3.2.ii.: I don't know what you mean with "why is a slope for _pas_ not really being modelled?"
+
+    - Lau: try to have a look at the output of the random effects (ranef) or the design matrix Zt using getME  
+    
+  iii. if you get a convergence error, try another algorithm (the default is the _Nelder_Mead_) - try (_bobyqa_) for which the `dfoptim` package is needed. In `glmer`, you can add the following for the `control` argument: `glmerControl(optimizer="bobyqa")` (if you are interested, also have a look at the function `allFit`)
     iv. when you have a converging fit - fit a model with only the main effects of _pas_ and _task_. Compare this with the model that also includes the interaction  
     v. indicate which of the two models, you would choose and why  
     vi. based on your chosen model - write a short report on what this says about the distribution of ratings as dependent on _pas_ and _task_  
