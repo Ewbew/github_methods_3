@@ -11,7 +11,11 @@ output: html_document
 }
 </style>
 
+<<<<<<< HEAD
 ```{r setup include = FALSE}
+=======
+```{r setup, include=FALSE}
+>>>>>>> 424614f98e550448b131f031f9d93c1622c0c35b
 knitr::opts_chunk$set(echo = TRUE)
 
 pacman::p_load(utils,tidyverse, patchwork, ggplot2, lme4, stats, grid, ggpubr, ggrepel, graphics,effects,VCA, vroom, readbulk,stringi, gridExtra, MuMIn,dfoptim)
@@ -35,7 +39,11 @@ The data is associated with Experiment 2 of the article at the following DOI htt
 1) Put the data from all subjects into a single data frame  
 2) Describe the data and construct extra variables from the existing variables  
     i. add a variable to the data frame and call it _correct_ (have it be a _logical_ variable). Assign a 1 to each row where the subject indicated the correct answer and a 0 to each row where the subject indicated the incorrect answer (__Hint:__ the variable _obj.resp_ indicates whether the subject answered "even", _e_ or "odd", _o_, and the variable _target_type_ indicates what was actually presented.
+<<<<<<< HEAD
 ```{r include=FALSE}
+=======
+```{r}
+>>>>>>> 424614f98e550448b131f031f9d93c1622c0c35b
 df <- read_bulk(
   directory= "experiment2/",# "Audition/" is the foldername where data is stored
   fun = read_csv
@@ -123,6 +131,18 @@ df$subject <- as.factor(df$subject)
 df$correct <- as.factor(df$correct)
 ```
 
+<<<<<<< HEAD
+=======
+
+
+1) Put the data from all subjects into a single data frame  
+2) Describe the data and construct extra variables from the existing variables  
+    i. add a variable to the data frame and call it _correct_ (have it be a _logical_ variable). Assign a 1 to each row where the subject indicated the correct answer and a 0 to each row where the subject indicated the incorrect answer (__Hint:__ the variable _obj.resp_ indicates whether the subject answered "even", _e_ or "odd", _o_, and the variable _target_type_ indicates what was actually presented.
+    ii. describe what the following variables in the data frame contain, _trial.type_, _pas_, _trial_, _target.contrast_, _cue_, _task_, _target_type_, _rt.subj_, _rt.obj_, _obj.resp_, _subject_ and _correct_. (That means you can ignore the rest of the variables in your description). For each of them, indicate and argue for what `class` they should be classified into, e.g. _factor_, _numeric_ etc.  
+    
+    
+    
+>>>>>>> 424614f98e550448b131f031f9d93c1622c0c35b
   iii. for the staircasing part __only__, create a plot for each subject where you plot the estimated function (on the _target.contrast_ range from 0-1) based on the fitted values of a model (use `glm`) that models _correct_ as dependent on _target.contrast_. These plots will be our _no-pooling_ model. Comment on the fits - do we have enough data to plot the logistic functions?  
   
 ```{r}
@@ -153,10 +173,26 @@ subjects <- c(17:29)
 plots <- lapply(subjects, FUN=nopoolfun)
 do.call(grid.arrange,  plots)
 ```
+<<<<<<< HEAD
 By looking at the different plots, the fitted values doesn't seem to follow the traditional sigmoid function of logistic regression - the s-formed curve, that indicates the probability of 1, given the predictor variable(s). We might therefore need more data before the plots will begin to have a sigmoid curve. Furthermore, these lacking fits tot he logistic functions could also be due to a ceiling effect in the experiment, where most of the target contrasts (the predictor value in our model) is predicted to have the outcome variable of a correct trial.
 
 
   iv. on top of those plots, add the estimated functions (on the _target.contrast_ range from 0-1) for each subject based on partial pooling model (use `glmer` from the package `lme4`) where unique intercepts and slopes for _target.contrast_ are modelled for each _subject_  
+=======
+
+
+
+```{r}
+#  By looking at the different plots, the fitted values doesn't seem to follow the traditional sigmoid function of logistic regression - the s-formed curve, that indicates the probability of 1, given the predictor variable(s). We might therefore need more data 
+Data enoug for it to seem like there is a 
+
+
+
+# There seem to be "enough" data, since I can stil plo the logistic function (even though the typical sigmmoid function isn't ) #
+```
+  
+iv. on top of those plots, add the estimated functions (on the _target.contrast_ range from 0-1) for each subject based on partial pooling model (use `glmer` from the package `lme4`) where unique intercepts and slopes for _target.contrast_ are modelled for each _subject_  
+>>>>>>> 424614f98e550448b131f031f9d93c1622c0c35b
     v. in your own words, describe how the partial pooling model allows for a better fit for each subject  
 
 ```{r}
@@ -187,8 +223,13 @@ subjects <- c(17:29)
 plots <- lapply(subjects, FUN=poolNoPoolFun)
 do.call(grid.arrange,  plots)
 ```
+<<<<<<< HEAD
 The blue graphs are the predicted probabilities of the no pooling model while the red graphs are the predicted values of the partial polling model.
 As we see, that red graphs doesn't vary as much in between subject as the blue graphs does, which is due to that it both take the individual differences into account along with the grand mean of all the subjects, making the model more generalizable to new data. The no pooling models only take the mean of the individual subjects, making it a great fit to the data, but an overfit to the data nevertheless, meaning that the models typically are not very generalizable to new data. On the other hand, using a complete pool model would disregard the in-between variance there is between subjects, which is not in line with the real world - there can be a general trend that all people follow while we still know, that people are different from each other and have different baselines - e.g. some people just have better eyesight than others. 
+=======
+Beep boop - blue is the no pooling model, and red is the partial pooling model.
+It is better at generalizing
+>>>>>>> 424614f98e550448b131f031f9d93c1622c0c35b
 
 ## Exercise 2
 
@@ -241,16 +282,28 @@ qqnorm(resid(dfExp20ModelLog));qqline(resid(dfExp20ModelLog), col = "purple")
 Looking at the QQPlots of the log-transformed data, they look way better now - all QQplots, except the one of the log transformed data of subject 10, more or less fits the line of the QQplot, which signifies that the residuals of the log-transformed data is more normally distributed compared to the non-log-transformed data
 
 
+<<<<<<< HEAD
 2) Now do a partial pooling model modeling objective response times as dependent on _task_? (set `REML=FALSE` in your `lmer`-specification)  
+=======
+2) Now do a partial pooling model modelling objective response times as dependent on _task_? (set `REML=FALSE` in your `lmer`-specification)  
+    i. which would you include among your random effects and why? (support your choices with relevant measures, taking into account variance explained and number of parameters going into the modelling)  
+    ii. explain in your own words what your chosen models says about response times between the different tasks  
+    
+>>>>>>> 424614f98e550448b131f031f9d93c1622c0c35b
 ```{r}
 parPoolRtTaskModel1 = lmer(rt.obj ~ task + (1|subject), dfExp, REML = FALSE)
 
 parPoolRtTaskModel2 = lmer(rt.obj ~ task +(1|trial), dfExp, REML = FALSE)
+<<<<<<< HEAD
 # Running the model results in singular fit
+=======
+#Convergence error - signifies an overfit and therefore the model is hard tot generalize to new data
+>>>>>>> 424614f98e550448b131f031f9d93c1622c0c35b
 
 parPoolRtTaskModel3 = lmer(rt.obj ~ task + (1|subject) + (1|trial), dfExp, REML = FALSE)
 
 parPoolRtTaskModel4 = lmer(rt.obj ~ task + (task|subject) + (1|trial), dfExp, REML = FALSE)
+<<<<<<< HEAD
 # Running the model results in singular fit
 
 # Looking at the variance explained by the random effects by looking at the output from the summary()-function:
@@ -258,6 +311,9 @@ summary(parPoolRtTaskModel1)
 summary(parPoolRtTaskModel2)
 summary(parPoolRtTaskModel3)
 summary(parPoolRtTaskModel4)
+=======
+# Convergence error - signifies an overfit and therefore the model is hard tot generalize to new data
+>>>>>>> 424614f98e550448b131f031f9d93c1622c0c35b
 
 AIC(parPoolRtTaskModel1,parPoolRtTaskModel2,parPoolRtTaskModel3,parPoolRtTaskModel4)
 
@@ -271,6 +327,7 @@ r.squaredGLMM(parPoolRtTaskModel2) #R2c = 0.00082565
 r.squaredGLMM(parPoolRtTaskModel3) #R2c = 0.015158
 r.squaredGLMM(parPoolRtTaskModel4) #R2c = 0.015826
 ```
+<<<<<<< HEAD
   
   i. which would you include among your random effects and why? (support your choices with relevant measures, taking into account variance explained and number of parameters going into the modeling)
 
@@ -301,6 +358,14 @@ summary(model1)
 We see, that these estimates are significant, since the p-values associated with the t-values are all below the standard alpha-level of 0.05, meaning that the difference between the task pairs and task quadruplet is significant along with the difference between the task pairs and task singles.
     
 3) Now add _pas_ and its interaction with _task_ to the fixed effects  
+=======
+
+    
+3) Now add _pas_ and its interaction with _task_ to the fixed effects  
+    i. how many types of group intercepts (random effects) can you add without ending up with convergence issues or singular fits?  
+    ii. create a model by adding random intercepts (without modelling slopes) that results in a singular fit - then use `print(VarCorr(<your.model>), comp='Variance')` to inspect the variance vector - explain why the fit is singular (Hint: read the first paragraph under details in the help for `isSingular`)
+    iii. in your own words - how could you explain why your model would result in a singular fit?  
+>>>>>>> 424614f98e550448b131f031f9d93c1622c0c35b
 ```{r}
 convergTestModel1 = lmer(rt.obj ~ task + pas:task + (1|subject), dfExp, REML = FALSE)
 convergTestModel2 = lmer(rt.obj ~ task + pas:task + (1|subject) + (1|trial), dfExp, REML = FALSE)
@@ -312,6 +377,7 @@ convergTestModel5 = lmer(rt.obj ~ task + pas:task + (1|subject) + (1|trial) + (1
 
 convergTestModel6 = lmer(rt.obj ~ task + pas:task + (1|subject) + (1|trial) + (1|cue) + (1|target.type) + (1|odd.digit) + (1|even.digit), dfExp, REML = FALSE)
 
+<<<<<<< HEAD
 ```
 i. how many types of group intercepts (random effects) can you add without ending up with convergence issues or singular fits?  
 
@@ -333,6 +399,16 @@ print(VarCorr(convergTestModel6), comp='Variance')
 summary(convergTestModel6)
 ```
 Running the model of convergTestModel6 resulted in a singular fit due to the variance of the group intercept of even.digit is zero or very close to it, which results in a singular fit. This means, that making the random effect of group intercept for the variable even.digit doesn't account for any of the variance in the data, making the model too complex to the data. 
+=======
+print(VarCorr(convergTestModel6), comp='Variance')
+```
+The amount of group intercepts than can be added does not only depend on the amount, but also on the chosen group intercepts - but in our case, with the group intercepts chosen, it took 6 group intercepts before we ended up with singular fits
+
+"ii.By adding (1|subject)+(1|trial)+(1|task) to the existing model with "pas" and "task" as fixed effects interaction, the model met singular fits issues. When inspecting the variance vector of the model with singular fits (np_model_4), it shows that the reason for the singular fit, is that the model contains a random-effect variance estimate of zero, this random-effect is (1|task)."
+
+"iii. I suppose the singular fit is a result of overfitting. The model and its random effects are to complex to be supported by the data. To overcome this, we could remove some random effects one by one."
+
+>>>>>>> 424614f98e550448b131f031f9d93c1622c0c35b
 
 ## Exercise 3
 
@@ -342,13 +418,21 @@ Running the model of convergTestModel6 resulted in a singular fit due to the var
 data_count <- df %>% 
   group_by(subject, task, pas) %>% 
   dplyr::summarize("count" = n())
+<<<<<<< HEAD
+=======
+view(data_count)
+>>>>>>> 424614f98e550448b131f031f9d93c1622c0c35b
 
 #EXTRA STUFF
 
 # Double-checking that there are no observations that fits with the following specifications, since it is not in the data frame of 'data_count':
 df %>% filter(subject == "002",task == "pairs",pas == 4)
 
+<<<<<<< HEAD
 # We see, that there are no observations that meet the above specifications (the output of the above line gives a dataframe with 0 rows), and therefore the row specifying this has been left out. If we want the rows that includes the different combinations of subject, pas and task, that has 0 as the amount of observations, we need to construct the data frame differently or mutate the data frame by inserting the rows (since I haven't found an easier way to do it and for the fun of it).
+=======
+# We see, that there are no observations that meet the above specifications (the output of the above line gives a datafram with 0 rows), and therefore the row specifying this has been left out. If we want the rows that includes the different combinations of subject, pas and task, that has 0 as the amount of observations, we need to construct the data frame differently or mutate the data frame by inserting the rows (since I haven't found an easier way to do it and for the fun of it).
+>>>>>>> 424614f98e550448b131f031f9d93c1622c0c35b
 # Since the data frame is going to be used for fitting regression lines, which makes it important to include all groups, even though where count = 0, we'll try constructing the data frame differently:
 
 baseDf = data.frame(pas = rep(1:4,(3*29)),
@@ -374,6 +458,7 @@ dataCount$task = as.factor(dataCount$task)
 dataCount$subject = as.factor(dataCount$subject)
 ```
 
+<<<<<<< HEAD
 2) Now fit a multilevel model that models a unique "slope" for _pas_ for each _subject_ with the interaction between _pas_ and _task_ and their main effects being modelled  
     i. which family should be used?  
     
@@ -430,6 +515,39 @@ We are not really interested in predicting count from PAS rating (i.e. the parti
   
   vi. based on your chosen model - write a short report on what this says about the distribution of ratings as dependent on _pas_ and _task_  
   vii. include a plot that shows the estimated amount of ratings for four subjects of your choosing 
+=======
+
+```{r}
+
+# To check which family we should use, we make a histogram of the count variable to visually inspect the distribution of the data. 
+hist(dataCount$count)
+# We see, that the curve follows the one of a poisson distribution, which makes sense, since we're dealing with data that specifies counts - the data points therefore always have a positive x-value. Furthermore, the x-values are all integers.
+
+# We now make the model, specifying the family to be poisson, based on the nature of the data's distribution (no intercept for subject is being modeled - only the slope for the variable 'pas' for each subject):
+count_model = glmer(count ~ pas*task + (pas+0|subject), data = dataCount, family = poisson, control = glmerControl(optimizer = "bobyqa")) 
+summary(count_model)
+
+count_model2 = glmer(count ~ pas*task + (pas+0|subject), data = dataCount, family = poisson, control = glmerControl(optimizer = "bobyqa")) 
+summary(count_model);summary(count_model2)
+
+```
+
+2) Now fit a multilevel model that models a unique "slope" for _pas_ for each _subject_ with the interaction between _pas_ and _task_ and their main effects being modelled  
+    i. which family should be used?  
+    ii. why is a slope for _pas_ not really being modelled?  
+    
+  Question and Lau's answer:
+  
+  Question: Question 3.2.ii.: I don't know what you mean with "why is a slope for _pas_ not really being modelled?"
+
+    - Lau: try to have a look at the output of the random effects (ranef) or the design matrix Zt using getME  
+    
+  iii. if you get a convergence error, try another algorithm (the default is the _Nelder_Mead_) - try (_bobyqa_) for which the `dfoptim` package is needed. In `glmer`, you can add the following for the `control` argument: `glmerControl(optimizer="bobyqa")` (if you are interested, also have a look at the function `allFit`)
+    iv. when you have a converging fit - fit a model with only the main effects of _pas_ and _task_. Compare this with the model that also includes the interaction  
+    v. indicate which of the two models, you would choose and why  
+    vi. based on your chosen model - write a short report on what this says about the distribution of ratings as dependent on _pas_ and _task_  
+    vii. include a plot that shows the estimated amount of ratings for four subjects of your choosing 
+>>>>>>> 424614f98e550448b131f031f9d93c1622c0c35b
 3) Finally, fit a multilevel model that models _correct_ as dependent on _task_ with a unique intercept for each _subject_  
     i. does _task_ explain performance?  
     ii. add _pas_ as a main effect on top of _task_ - what are the consequences of that?  

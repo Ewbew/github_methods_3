@@ -114,6 +114,8 @@ plt.show()
 hep = [1,2,3,4,5,6,59]
 np.argmax(hep)
 
+
+File week_08/megmag_data.npy 
 ```
 
 
