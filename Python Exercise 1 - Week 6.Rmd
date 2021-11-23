@@ -1,0 +1,22 @@
+---
+title: "Python Skrrt"
+aut
+```hor: "Otto Sejrskild Santesson"
+date: "2/11/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+update.packages('Rcpp')
+pacman::p_load('Rcpp','reticulate')
+```
+
+
+```{r}
+
+
+print(conda_list())
+print(conda_list())
+
