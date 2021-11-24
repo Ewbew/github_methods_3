@@ -26,6 +26,7 @@ To make sure that _Python_ runs within _R Markdown_, make sure you have the _ret
 Also create a text file that is called _.Renviron_ (remember the dot) placed in the folder where your _RProj_ file is. It should have a single line: `RETICULATE_PYTHON=PATH` where `PATH` is the path to your _methods3_ conda environment. Note that you must restart _R_ for the changes of creating the _.Renviron_ file to take effect- Use the commands below to find the paths:  
 
 ```{r}
+<<<<<<< HEAD
 
 install.packages('Rcpp')
 update.packages('Rcpp')
@@ -34,6 +35,10 @@ library('reticulate')
 print(conda_list())
 
 
+=======
+library(reticulate)
+print(conda_list())
+>>>>>>> d256f565ca243e6f7d339db4c08a88c19fd7d0eb
 ```
 
 To update your environment based on the updated `methods3_environment.yml` file, go to your _week_06_ folder and run the following from a _bash_ interpreter (e.g. _terminal_):  
@@ -45,6 +50,7 @@ conda env create --force -f methods3_environment.yml
 The `--force` flag allows for overwriting  
 
 ## Good to know about _Python_ (in no particular order)
+<<<<<<< HEAD
 ```{r}
 a <- 2
 print(
@@ -54,6 +60,12 @@ print(
 
 ```{python}
 ## assignment is done and only done with "=" (no arrows)
+=======
+
+```{python}
+## assignment is done and only done with "=" (no arrows)
+a = 2
+>>>>>>> d256f565ca243e6f7d339db4c08a88c19fd7d0eb
 # a <- 2 # results in a syntax error
 ## already assigned variables can be reassigned with basic arithmetic operations
 a += 2
@@ -68,6 +80,7 @@ a /= 2 # float  (numeric from R) division
 print(a)
 a **= 3 # exponentiation 
 print(a)
+<<<<<<< HEAD
 ```
 
 
@@ -87,6 +100,20 @@ print(a_list[1])
 
 
 ```{python}
+=======
+
+a_list = [1, 2] # initiate a list (the square brackets) with the integers 1 and 2
+b = a_list ## b now points to a_list, not to a new list with the integers 1 and 2 
+
+a_list.append(3) # add a new value to the end of the list
+print(a_list)
+print(b) # make sure you understand this
+
+print(a_list[0]) # zero-indexing
+print(a_list[1])
+
+
+>>>>>>> d256f565ca243e6f7d339db4c08a88c19fd7d0eb
 new_list = [0, 1, 2, 3, 4, 5]
 print(new_list[0:3])  # slicing
 
@@ -97,6 +124,7 @@ for index in range(0, 5): # indentation (use tabulation) controls scope of contr
     else:
         value += index
     print(value)
+<<<<<<< HEAD
 ```
 
 
@@ -112,6 +140,10 @@ for index in range(0, 5): # indentation (use tabulation) controls scope of contr
         value += index
     print(value)
     
+=======
+
+  
+>>>>>>> d256f565ca243e6f7d339db4c08a88c19fd7d0eb
 this_is_true = True # logical values
 this_is_false = False
     
@@ -123,6 +155,7 @@ def fix_my_p_value(is_it_supposed_to_be_significant):
         p = 0.35
     return(p)
 
+<<<<<<< HEAD
 print(fix_my_p_value(this_is_false))
 print(fix_my_p_value(this_is_true))
 
@@ -130,6 +163,11 @@ print(fix_my_p_value(this_is_true))
 
 
 ```{python}
+=======
+print(fix_my_p_value(True))
+
+
+>>>>>>> d256f565ca243e6f7d339db4c08a88c19fd7d0eb
 import numpy # methods of numpy can now be accessed as below
 # importing packages (similar to library)
 
@@ -159,6 +197,7 @@ plt.legend(['a legend', 'another legend'])
 # plt.show()
 ```
 
+<<<<<<< HEAD
 ```{python}
 plt.figure()
 
@@ -170,6 +209,8 @@ plt.plot([1,1.5], [1,10], 'r-')
 plt.plot([1,1.5], [1,1.5], 'go')
 ```
 
+=======
+>>>>>>> d256f565ca243e6f7d339db4c08a88c19fd7d0eb
 1) Do a linear regression based on _x_, _X_ and _y_ below (_y_ as the dependent variable) (Exercise 1.1)  
     i. find $\hat{\beta}$ and $\hat{y}$ (@ is matrix multiplication)
     ii. plot a scatter plot of _x_, _y_ and add a line based on $\hat{y}$ (use `plt.plot` after running `import matplotlib.pyplot as plt`)  
@@ -194,7 +235,11 @@ y += np.random.normal(loc=0, scale=1, size=n_samples)
 X = np.zeros(shape=(n_samples, 2))
 X[:, 0] = x ** 0
 X[:, 1] = x ** 1
+<<<<<<< HEAD
 print(X)
+=======
+
+>>>>>>> d256f565ca243e6f7d339db4c08a88c19fd7d0eb
 ```
 
 

@@ -11,14 +11,16 @@ output: html_document
 }
 </style>
 
-<<<<<<< HEAD
-```{r setup include = FALSE}
+
 =======
-```{r setup, include=FALSE}
->>>>>>> 424614f98e550448b131f031f9d93c1622c0c35b
+``` {r setup, include=FALSE}
+
 knitr::opts_chunk$set(echo = TRUE)
 
-pacman::p_load(utils,tidyverse, patchwork, ggplot2, lme4, stats, grid, ggpubr, ggrepel, graphics,effects,VCA, vroom, readbulk,stringi, gridExtra, MuMIn,dfoptim)
+install.packages("dplyr")
+install.packages("pacman")
+
+pacman::p_load(utils,tidyverse, patchwork, ggplot2, lme4, stats, grid, ggpubr, ggrepel, graphics,effects,VCA, vroom, readbulk,stringi, gridExtra, MuMIn,dfoptim, reticulate, Rcpp)
 ```
 
 # Exercises and objectives
