@@ -14,8 +14,13 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-pacman::p_load(utils,tidyverse, patchwork, ggplot2, lme4, stats, grid, ggpubr, ggrepel, graphics,effects,VCA, vroom, readbulk,stringi, gridExtra, MuMIn,dfoptim)
+pacman::p_load(utils,tidyverse, patchwork, ggplot2, lme4, stats, grid, ggpubr, ggrepel, graphics,effects,VCA, vroom, readbulk,stringi, gridExtra, MuMIn,dfoptim, gitcreds)
 
+```
+
+```{r}
+gitcreds_set()
+# Babyboi
 ```
 
 # Exercises and objectives
