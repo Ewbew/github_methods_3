@@ -14,19 +14,12 @@ output: pdf_document
 <<<<<<< HEAD
 ```{r}
 
-
-update.packages("Rcpp")
-update.packages("reticulate")
-library(Rcpp)
-pacman::p_load(reticulate)
+pacman::p_load(reticulate, Rcpp)
 print(conda_list())
 
 
 
-Sys.setenv(RETICULATE_PYTHON = "/Users/ottosejrskildsantesson/opt/miniconda3/bin/python")
-library(reticulate)
-
-
+repl_python()
 ```
 
 =======
@@ -48,6 +41,8 @@ The files `megmag_data.npy` and `pas_vector.npy` can be downloaded here (http://
 
 1) Load `megmag_data.npy` and call it `data` using `np.load`. You can use `join`, which can be imported from `os.path`, to create paths from different string segments  
     i. The data is a 3-dimensional array. The first dimension is number of repetitions of a visual stimulus, the second dimension is the number of sensors that record magnetic fields (in Tesla) that stem from neurons activating in the brain, and the third dimension is the number of time samples. How many repetitions, sensors and time samples are there?  
+    
+    
 
 ```{python}
 import numpy as np
