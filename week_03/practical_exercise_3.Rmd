@@ -11,16 +11,10 @@ output: html_document
 }
 </style>
 
-
-=======
 ``` {r setup, include=FALSE}
-
 knitr::opts_chunk$set(echo = TRUE)
 
-install.packages("dplyr")
-install.packages("pacman")
-
-pacman::p_load(utils,tidyverse, patchwork, ggplot2, lme4, stats, grid, ggpubr, ggrepel, graphics,effects,VCA, vroom, readbulk,stringi, gridExtra, MuMIn,dfoptim, reticulate, Rcpp)
+pacman::p_load(utils,tidyverse, patchwork, ggplot2, lme4, stats, grid, ggpubr, ggrepel, graphics,effects,VCA, vroom, readbulk,stringi, gridExtra, MuMIn,dfoptim, reticulate, Rcpp,dplyr, pacman)
 ```
 
 # Exercises and objectives
@@ -41,13 +35,9 @@ The data is associated with Experiment 2 of the article at the following DOI htt
 1) Put the data from all subjects into a single data frame  
 2) Describe the data and construct extra variables from the existing variables  
     i. add a variable to the data frame and call it _correct_ (have it be a _logical_ variable). Assign a 1 to each row where the subject indicated the correct answer and a 0 to each row where the subject indicated the incorrect answer (__Hint:__ the variable _obj.resp_ indicates whether the subject answered "even", _e_ or "odd", _o_, and the variable _target_type_ indicates what was actually presented.
-<<<<<<< HEAD
 ```{r include=FALSE}
-=======
-```{r}
->>>>>>> 424614f98e550448b131f031f9d93c1622c0c35b
 df <- read_bulk(
-  directory= "experiment2/",# "Audition/" is the foldername where data is stored
+  directory= "experiment2/", # "Audition/" is the foldername where data is stored
   fun = read_csv
 )
 
@@ -133,10 +123,6 @@ df$subject <- as.factor(df$subject)
 df$correct <- as.factor(df$correct)
 ```
 
-<<<<<<< HEAD
-=======
-
-
 1) Put the data from all subjects into a single data frame  
 2) Describe the data and construct extra variables from the existing variables  
     i. add a variable to the data frame and call it _correct_ (have it be a _logical_ variable). Assign a 1 to each row where the subject indicated the correct answer and a 0 to each row where the subject indicated the incorrect answer (__Hint:__ the variable _obj.resp_ indicates whether the subject answered "even", _e_ or "odd", _o_, and the variable _target_type_ indicates what was actually presented.
@@ -144,8 +130,8 @@ df$correct <- as.factor(df$correct)
     
     
     
->>>>>>> 424614f98e550448b131f031f9d93c1622c0c35b
-  iii. for the staircasing part __only__, create a plot for each subject where you plot the estimated function (on the _target.contrast_ range from 0-1) based on the fitted values of a model (use `glm`) that models _correct_ as dependent on _target.contrast_. These plots will be our _no-pooling_ model. Comment on the fits - do we have enough data to plot the logistic functions?  
+
+iii. for the staircasing part __only__, create a plot for each subject where you plot the estimated function (on the _target.contrast_ range from 0-1) based on the fitted values of a model (use `glm`) that models _correct_ as dependent on _target.contrast_. These plots will be our _no-pooling_ model. Comment on the fits - do we have enough data to plot the logistic functions?  
   
 ```{r}
 dfStair = df %>% 

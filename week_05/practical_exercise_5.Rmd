@@ -1,8 +1,10 @@
 ---
 title: "practical_exercise_5, Methods 3, 2021, autumn semester"
-author: 'Otto Sejrskild Santesson'
+author: "Otto Sejrskild Santesson"
 date: "13th October 2021"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 <style type="text/css">
@@ -12,15 +14,12 @@ output: pdf_document
 </style>
 
 ```{r setup, include=FALSE}
+
+
 knitr::opts_chunk$set(echo = TRUE)
 
-pacman::p_load(utils,tidyverse, patchwork, ggplot2, lme4, stats, grid, ggpubr, ggrepel, graphics,effects,VCA, vroom, readbulk,stringi, gridExtra, MuMIn,dfoptim, gitcreds)
+pacman::p_load(utils,tidyverse, patchwork, ggplot2, lme4, stats, grid, ggpubr, ggrepel, graphics,effects,VCA, vroom, readbulk,stringi, gridExtra, MuMIn,dfoptim, gitcreds, formatR)
 
-```
-
-```{r}
-gitcreds_set()
-# Babyboi
 ```
 
 # Exercises and objectives
@@ -42,7 +41,8 @@ The data is associated with Experiment 1 of the article at the following DOI htt
   
 1) Put the data from all subjects into a single data frame - note that some of the subjects do not have the _seed_ variable. For these subjects, add this variable and make in _NA_ for all observations. (The _seed_ variable will not be part of the analysis and is not an experimental variable)  
 
-```{r}
+```{r echo=TRUE, message=FALSE, warning=FALSE, results = 'hide', list(width.cutoff=60),tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+
 df = read_bulk(
   directory= "experiment_1/",# "Audition/" is the foldername where data is stored
   fun = read_csv)
@@ -73,6 +73,7 @@ levels(df$trial.type)
 
 df = df %>% 
   filter(trial.type != "practice")
+view(df)
 
 ```
 
@@ -104,8 +105,10 @@ log_model_partial_pool = glmer(correct ~ target.frames + (1|subject), data = df,
 
 
 ```{r}
+
+
 df_2 = read_bulk(
-  directory= "experiment_1/",# "Audition/" is the foldername where data is stored
+  directory= "experiment_1/",
   fun = read_csv)
 
 df_2 = df_2 %>% 
@@ -121,9 +124,9 @@ class(df_2$correct)
 
 log_model_partial_pool_2 = glmer(correct ~ target.frames + (1|subject), data = df_2, family = binomial(link = "logit"))
 
-summary(log_model_partial_pool);summary(log_model_partial_pool_2)
 
-view(df)
+
+summary(log_model_partial_pool);summary(log_model_partial_pool_2)
 ```
 
 
@@ -149,7 +152,7 @@ log_likelihood <- function(i){
   iii. apply both functions to the pooling model you just created. Make sure that the log-likelihood matches what is returned from the _logLik_ function for the pooled model. Does the likelihood-function return a value that is surprising? Why is the log-likelihood preferable when working with computers with limited precision?  
 ```{r}
 likelihood(log_model_pool)
-format(likelihood(log_model_pool), scientific = TRUE)
+format(likelihood(log_model_pool), scientific = TRUE) #Try to format the output in scientific notation, to see if the output of 0 has something to do with rounding.
 log_likelihood(log_model_pool)
 logLik(log_model_pool)
 ```
@@ -167,25 +170,41 @@ We se, that the two results differ from each other - the way to calculate the lo
 
   
 ```{r}
-
 null_log_model = glm(correct ~ 1, data = df, family = binomial(link = "logit"))
-log_model_1 = 
-log_model_
-    
-  ?glm()
+
 log_model_pool = glm(correct ~ target.frames, data = df, family = binomial(link = "logit"))
 
 log_model_partial_pool = glmer(correct ~ target.frames + (1|subject), data = df, family = binomial(link = "logit"))
-
-?model.matrix
 ```
 
 2) Use log-likelihood ratio tests to argue for the addition of predictor variables, start from the null model, `glm(correct ~ 1, 'binomial', data)`, then add subject-level intercepts, then add a group-level effect of _target.frames_ and finally add subject-level slopes for _target.frames_. Also assess whether or not a correlation between the subject-level slopes and the subject-level intercepts should be included.
     i. write a short methods section and a results section where you indicate which model you chose and the statistics relevant for that choice. Include a plot of the estimated group-level function with `xlim=c(0, 8)` that includes the estimated subject-specific functions.
-    ii. also include in the results section whether the fit didn't look good for any of the subjects. If so, identify those subjects in the report, and judge (no statistical test) whether their performance (accuracy) differed from that of the other subjects. Was their performance better than chance? (Use a statistical test this time) (50 %)  
+```{r}
+
+```
+    
+    
+  ii. also include in the results section whether the fit didn't look good for any of the subjects. If so, identify those subjects in the report, and judge (no statistical test) whether their performance (accuracy) differed from that of the other subjects. Was their performance better than chance? (Use a statistical test this time) (50 %)  
+  
+```{r}
+
+```
+  
 3) Now add _pas_ to the group-level effects - if a log-likelihood ratio test justifies this, also add the interaction between _pas_ and _target.frames_ and check whether a log-likelihood ratio test justifies this  
-    i. if your model doesn't converge, try a different optimizer  
-    ii. plot the estimated group-level functions over `xlim=c(0, 8)` for each of the four PAS-ratings - add this plot to your report (see: 5.2.i) and add a description of your chosen model. Describe how _pas_ affects accuracy together with target duration if at all. Also comment on the estimated functions' behaviour at target.frame=0 - is that behaviour reasonable?  
+```{r}
+
+```
+
+  i. if your model doesn't converge, try a different optimizer  
+```{r}
+
+```
+  
+  ii. plot the estimated group-level functions over `xlim=c(0, 8)` for each of the four PAS-ratings - add this plot to your report (see: 5.2.i) and add a description of your chosen model. Describe how _pas_ affects accuracy together with target duration if at all. Also comment on the estimated functions' behaviour at target.frame=0 - is that behaviour reasonable?  
+```{r}
+
+```
+  
 
 # EXERCISE 6 - Test linear hypotheses
 
